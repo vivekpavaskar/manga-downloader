@@ -5,7 +5,7 @@ import time
 import os
 
 
-# Getting Image URLS from the Chapter Page
+# Getting Image URLS from the Chapter Page ===================================
 def get_img_url(url):
     driver = webdriver.Firefox()
     driver.get(url)
@@ -19,7 +19,7 @@ def get_img_url(url):
     return url_list
 
 
-# Downloading Images
+# Downloading Images ==============================================================
 def image_download(download_location, image_url):
     filename = download_location + image_url.split("/")[-1]
     # Open the url image, set stream to True, this will return the stream content.
@@ -36,7 +36,7 @@ def image_download(download_location, image_url):
         print('Image Couldn\'t be retreived')
 
 
-# main
+# main ==============================================================
 manga_title = str(input("Enter Manga Title : "))
 chapter_start = int(input("Download Chapter From : "))
 chapter_end = int(input("Download Chapter To : "))
