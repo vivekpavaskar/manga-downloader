@@ -3,16 +3,20 @@ import requests
 import shutil
 import time
 import os
+import numpy as np
 
 
 # Getting Image URLS from the Chapter Page ===================================
 def get_img_url(url):
+    url_list = []
     driver = webdriver.Firefox()
     driver.get(url)
+    if driver.title == '404 Page Not Found':
+        driver.close()
+        return url_list
     # To complete rendering of page in driver
     time.sleep(7)
     urls = driver.find_elements_by_class_name('img-fluid')
-    url_list = []
     for u in urls:
         url_list.append(u.get_attribute('src'))
     driver.close()
@@ -31,7 +35,7 @@ def image_download(download_location, image_url):
         # Open a local file with wb ( write binary ) permission.
         with open(filename, 'wb') as f:
             shutil.copyfileobj(r.raw, f)
-        print('Image sucessfully Downloaded: ', filename)
+        print(filename)
     else:
         print('Image Couldn\'t be retreived')
 
@@ -54,14 +58,17 @@ except OSError as error:
     print(error)
 
 manga_url_title = "-".join(manga_title.split())
-for i in range(chapter_start, chapter_end + 1):
+for i in np.arange(chapter_start, chapter_end + 1, 0.1):
+    print(i)
     chapter_url = "https://mangasee123.com/read-online/" + manga_url_title.title() + "-chapter-" + str(i) + ".html"
     # creating chapter directory
-    path = "./downloads/" + manga_title.title() + "/" + manga_title.title() + " C" + str(i).zfill(4) + "/"
+    path = "./downloads/" + manga_title.title() + "/" + manga_title.title() + " C" + str(i).zfill(5) + "/"
+    img_url_list = get_img_url(chapter_url)
+    if len(img_url_list) == 0:
+        continue
     try:
         os.mkdir(path)
     except OSError as error:
         print(error)
-    img_url_list = get_img_url(chapter_url)
     for img in img_url_list:
         image_download(path, img)
